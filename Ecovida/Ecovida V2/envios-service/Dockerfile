@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 3004 
 
 # Comando para ejecutar la aplicación 
-CMD [ "node", "index.js" , "nodemon"] 
+CMD [ "node", "index.js" ]

@@ -1,0 +1,198 @@
+# Blueprint de Render: 5 microservicios + Postgres + frontend
+# https://render.com/docs/blueprint-spec
+#
+# Notas:
+# - Los nombres generan URLs globales (https://<name>.onrender.com). Si un nombre
+#   ya existe en Render, se le agrega un sufijo (-2) y debes ajustar los valores
+#   REACT_APP_* del frontend y redeployar.
+# - JWT_SECRET se configura manualmente en el dashboard (sync: false).
+
+databases:
+  - name: ecovida-db
+    plan: free
+    databaseName: ecovida
+    ipAllowList: []
+
+services:
+  # ---------- Microservicios ----------
+  - type: web
+    name: ecovida-usuarios
+    runtime: docker
+    dockerContext: ./Ecovida/Ecovida V2/usuarios-service
+    dockerfilePath: ./Ecovida/Ecovida V2/usuarios-service/Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: ecovida-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ecovida-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: ecovida-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: ecovida-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: ecovida-db
+          property: database
+      - key: DB_SSL
+        value: "true"
+      - key: JWT_SECRET
+        sync: false
+
+  - type: web
+    name: ecovida-catalogo
+    runtime: docker
+    dockerContext: ./Ecovida/Ecovida V2/catalogo-service
+    dockerfilePath: ./Ecovida/Ecovida V2/catalogo-service/Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: ecovida-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ecovida-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: ecovida-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: ecovida-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: ecovida-db
+          property: database
+      - key: DB_SSL
+        value: "true"
+      - key: JWT_SECRET
+        sync: false
+
+  - type: web
+    name: ecovida-carrito
+    runtime: docker
+    dockerContext: ./Ecovida/Ecovida V2/carrito-service
+    dockerfilePath: ./Ecovida/Ecovida V2/carrito-service/Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: ecovida-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ecovida-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: ecovida-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: ecovida-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: ecovida-db
+          property: database
+      - key: DB_SSL
+        value: "true"
+      - key: JWT_SECRET
+        sync: false
+
+  - type: web
+    name: ecovida-pedidos
+    runtime: docker
+    dockerContext: ./Ecovida/Ecovida V2/pedidos-service
+    dockerfilePath: ./Ecovida/Ecovida V2/pedidos-service/Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: ecovida-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ecovida-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: ecovida-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: ecovida-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: ecovida-db
+          property: database
+      - key: DB_SSL
+        value: "true"
+      - key: JWT_SECRET
+        sync: false
+
+  - type: web
+    name: ecovida-envios
+    runtime: docker
+    dockerContext: ./Ecovida/Ecovida V2/envios-service
+    dockerfilePath: ./Ecovida/Ecovida V2/envios-service/Dockerfile
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: ecovida-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ecovida-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: ecovida-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: ecovida-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: ecovida-db
+          property: database
+      - key: DB_SSL
+        value: "true"
+      - key: JWT_SECRET
+        sync: false
+
+  # ---------- Frontend (build CRA + hosting estático) ----------
+  - type: static
+    name: ecovida-frontend
+    staticPublishPath: ./Ecovida/ecovida-frontend/build
+    buildCommand: npm --prefix Ecovida/ecovida-frontend install && npm --prefix Ecovida/ecovida-frontend run build
+    envVars:
+      - key: REACT_APP_USERS_API
+        value: https://ecovida-usuarios.onrender.com
+      - key: REACT_APP_CATALOG_API
+        value: https://ecovida-catalogo.onrender.com
+      - key: REACT_APP_CART_API
+        value: https://ecovida-carrito.onrender.com
+      - key: REACT_APP_ORDERS_API
+        value: https://ecovida-pedidos.onrender.com
+      - key: REACT_APP_SHIPPING_API
+        value: https://ecovida-envios.onrender.com

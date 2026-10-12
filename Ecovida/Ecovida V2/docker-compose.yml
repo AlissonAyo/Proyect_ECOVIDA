@@ -1,119 +1,145 @@
-version: '3.9' 
-
-networks:
-  kong-net:
-    external: true
-
-volumes:
-  app-data:
-
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecovida-postgres
+    environment:
+      POSTGRES_USER: ecovida
+      POSTGRES_PASSWORD: ecovida123
+      POSTGRES_DB: ecovida
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecovida -d ecovida"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - ecovida-net
+
   usuarios-service:
-    container_name: usuarios-service
-    image: usuarios-service
     build:
       context: ./usuarios-service
       dockerfile: Dockerfile
+    container_name: usuarios-service
     ports:
       - "3000:3000"
-    volumes:
-      - app-data:/usr/src/app/data
-      - ./usuarios-service:/usr/src/app
-      - /usr/src/app/node_modules
     environment:
-      - DB_USER=kong
-      - DB_PASS=kong
-      - DB_HOST=kong-database
+      - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_NAME=kong
-      - JWT_SECRET=supersecreto
+      - DB_USER=ecovida
+      - DB_PASS=ecovida123
+      - DB_NAME=ecovida
+      - JWT_SECRET=${JWT_SECRET:-supersecreto-local}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
-      - kong-net
+      - ecovida-net
 
   catalogo-service:
-    container_name: catalogo-service
-    image: catalogo-service
     build:
       context: ./catalogo-service
       dockerfile: Dockerfile
+    container_name: catalogo-service
     ports:
       - "3001:3001"
     volumes:
-      - app-data:/usr/src/app/data
-      - ./catalogo-service:/usr/src/app
-      - /usr/src/app/node_modules
+      - catalogo-uploads:/usr/src/app/uploads
     environment:
-      - DB_USER=kong
-      - DB_PASS=kong
-      - DB_HOST=kong-database
+      - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_NAME=kong
-      - JWT_SECRET=supersecreto
+      - DB_USER=ecovida
+      - DB_PASS=ecovida123
+      - DB_NAME=ecovida
+      - JWT_SECRET=${JWT_SECRET:-supersecreto-local}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
-      - kong-net
+      - ecovida-net
 
   carrito-service:
-    container_name: carrito-service
-    image: carrito-service
     build:
       context: ./carrito-service
       dockerfile: Dockerfile
+    container_name: carrito-service
     ports:
       - "3002:3002"
-    volumes:
-      - app-data:/usr/src/app/data
-      - ./carrito-service:/usr/src/app
-      - /usr/src/app/node_modules
     environment:
-      - DB_USER=kong
-      - DB_PASS=kong
-      - DB_HOST=kong-database
+      - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_NAME=kong
-      - JWT_SECRET=supersecreto
+      - DB_USER=ecovida
+      - DB_PASS=ecovida123
+      - DB_NAME=ecovida
+      - JWT_SECRET=${JWT_SECRET:-supersecreto-local}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
-      - kong-net
+      - ecovida-net
 
   pedidos-service:
-    container_name: pedidos-service
-    image: pedidos-service
     build:
       context: ./pedidos-service
       dockerfile: Dockerfile
+    container_name: pedidos-service
     ports:
       - "3003:3003"
-    volumes:
-      - app-data:/usr/src/app/data
-      - ./pedidos-service:/usr/src/app
-      - /usr/src/app/node_modules
     environment:
-      - DB_USER=kong
-      - DB_PASS=kong
-      - DB_HOST=kong-database
+      - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_NAME=kong
-      - JWT_SECRET=supersecreto
+      - DB_USER=ecovida
+      - DB_PASS=ecovida123
+      - DB_NAME=ecovida
+      - JWT_SECRET=${JWT_SECRET:-supersecreto-local}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
-      - kong-net
+      - ecovida-net
 
   envios-service:
-    container_name: envios-service
-    image: envios-service
     build:
       context: ./envios-service
       dockerfile: Dockerfile
+    container_name: envios-service
     ports:
       - "3004:3004"
-    volumes:
-      - app-data:/usr/src/app/data
-      - ./envios-service:/usr/src/app
-      - /usr/src/app/node_modules
     environment:
-      - DB_USER=kong
-      - DB_PASS=kong
-      - DB_HOST=kong-database
+      - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_NAME=kong
-      - JWT_SECRET=supersecreto
+      - DB_USER=ecovida
+      - DB_PASS=ecovida123
+      - DB_NAME=ecovida
+      - JWT_SECRET=${JWT_SECRET:-supersecreto-local}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
-      - kong-net
+      - ecovida-net
+
+  frontend:
+    build:
+      context: ../ecovida-frontend
+      dockerfile: Dockerfile
+    container_name: ecovida-frontend
+    ports:
+      - "3005:80"
+    depends_on:
+      - usuarios-service
+      - catalogo-service
+      - carrito-service
+      - pedidos-service
+      - envios-service
+    networks:
+      - ecovida-net
+
+networks:
+  ecovida-net:
+
+volumes:
+  pgdata:
+  catalogo-uploads:
