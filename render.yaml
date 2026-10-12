@@ -181,7 +181,8 @@ services:
         sync: false
 
   # ---------- Frontend (build CRA + hosting estático) ----------
-  - type: static
+  - type: web
+    runtime: static
     name: ecovida-frontend
     staticPublishPath: ./Ecovida/ecovida-frontend/build
     buildCommand: npm --prefix Ecovida/ecovida-frontend install && npm --prefix Ecovida/ecovida-frontend run build
