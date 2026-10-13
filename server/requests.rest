@@ -1,0 +1,133 @@
+### EcoVida server — Pruebas con REST Client (VS Code)
+# Instala la extensión "REST Client" y abre este archivo.
+# Cambia BASE por la URL real (local o Render).
+
+@BASE = http://localhost:3001
+# @BASE = https://ecovida-server.onrender.com
+
+### Health check (siempre 200; db: ok | error)
+GET {{BASE}}/api/health
+
+### Listar todos los productos
+GET {{BASE}}/api/products
+
+### Obtener producto por ID
+GET {{BASE}}/api/products/1
+
+### Obtener producto con ID inválido (debe responder 400)
+GET {{BASE}}/api/products/abc
+
+### Obtener producto inexistente (debe responder 404)
+GET {{BASE}}/api/products/999999
+
+### Crear producto (válido)
+POST {{BASE}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Miel de Abeja",
+  "category": "Endulzantes",
+  "price": 9.99,
+  "stock": 40
+}
+
+### Crear producto sin campos obligatorios (debe responder 400)
+POST {{BASE}}/api/products
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+### Crear producto con price inválido, ej. string (debe responder 400)
+POST {{BASE}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Producto Raro",
+  "category": "Test",
+  "price": "no-numero"
+}
+
+### Actualizar producto (parcial: solo price y stock)
+PUT {{BASE}}/api/products/1
+Content-Type: application/json
+
+{
+  "price": 11.49,
+  "stock": 95
+}
+
+### Actualizar producto inexistente (debe responder 404)
+PUT {{BASE}}/api/products/999999
+Content-Type: application/json
+
+{
+  "price": 5.00
+}
+
+### Eliminar producto
+DELETE {{BASE}}/api/products/1
+
+### Eliminar producto inexistente (debe responder 404)
+DELETE {{BASE}}/api/products/999999
+
+### Registrar usuario (válido)
+POST {{BASE}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo@ecovida.com",
+  "password": "Segura123!"
+}
+
+### Registrar usuario con email duplicado (debe responder 409)
+POST {{BASE}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo@ecovida.com",
+  "password": "OtraClave123!"
+}
+
+### Registrar con contraseña corta (debe responder 400)
+POST {{BASE}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "corto@ecovida.com",
+  "password": "123"
+}
+
+### Login correcto (guarda el token de la respuesta)
+POST {{BASE}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@ecovida.com",
+  "password": "Segura123!"
+}
+
+### Login con contraseña incorrecta (debe responder 401)
+POST {{BASE}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@ecovida.com",
+  "password": "WrongPass999!"
+}
+
+### Login con email inexistente (debe responder 401, mismo mensaje genérico)
+POST {{BASE}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "noexiste@ecovida.com",
+  "password": "Whatever123!"
+}
+
+### NOTA — Rate limiting:
+# - /api/auth/* : 10 peticiones cada 15 min por IP. Si haces muchos logins
+#   fallidos seguidos recibirás 429. Espera o reinicia el server local.
+# - /api/*      : 100 peticiones por minuto por IP (global suave).
+# Prueba con: hey -n 30 http://localhost:3001/api/health

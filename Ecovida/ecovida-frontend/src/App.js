@@ -15,6 +15,7 @@ import Orders from './pages/Orders';
 import AdminDashboard from './pages/AdminDashboard';
 import Blog from './pages/Blog';
 import NotFound from './pages/NotFound';
+import ServerProducts from './pages/ServerProducts';
 import PrivateRoute from './components/PrivateRoute';
 import { useAuth } from './hooks/useAuth';
 
@@ -85,6 +86,7 @@ function App() {
         <Route path="/productos" element={<ProductList />} />
         <Route path="/productos:id" element={<ProductDetail />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/demo-api" element={<ServerProducts />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

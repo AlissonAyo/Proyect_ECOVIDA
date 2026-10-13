@@ -1,0 +1,9 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno (secretos: nunca se suben a git)
+.env
+
+# Logs
+npm-debug.log*
+*.log
