@@ -61,6 +61,22 @@ red privada de Render. Si en el futuro usas un Postgres con certificado propio
 Todas las respuestas de `/api/health` son **200 incluso si la BD falla**
 (`db: "error"`) para que Render no reinicie el servicio por un fallo temporal.
 
+### Endpoint TEMPORAL de reset (staging/pentesting)
+
+| Método | Ruta | Condición de activación |
+|---|---|---|
+| POST | `/api/_debug/reset-seed` | Solo si `NODE_ENV=development` **o** `STAGING_MODE=true` |
+
+- Ejecuta `TRUNCATE ecovida.products RESTART IDENTITY` + INSERT de los 4
+  productos de seed en una transacción. Sirve para restaurar el catálogo tras
+  pruebas destructivas del pentesting (ver `PENTESTING-EJECUCION.md`).
+- **NO existe en producción** si `NODE_ENV=production` y `STAGING_MODE` no está
+  definida (la ruta responde 404).
+- **ANTES DE PASAR A PRODUCCIÓN:** eliminar el endpoint por completo — borrar
+  `routes/debug.js` y el bloque condicional de montaje en `index.js` (busca
+  `ELIMINAR ESTE BLOQUE`). Como defensa en profundidad, jamás definir
+  `STAGING_MODE` en el Web Service de producción.
+
 ## Seguridad implementada (OWASP)
 
 - **Consultas parametrizadas siempre** (`$1, $2…`); nunca concatenación de strings.

@@ -1,0 +1,68 @@
+✖ PA01: una persona anónima no puede crear productos (21678.0224ms)
+✖ PA02: una persona anónima no puede modificar productos (596.6186ms)
+✖ PA03: una persona anónima no puede eliminar productos (196.4137ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22558.1766
+
+✖ failing tests:
+
+test at tests\security.test.js:32:1
+✖ PA01: una persona anónima no puede crear productos (21678.0224ms)
+  AssertionError [ERR_ASSERTION]: Resultado inesperado: {"status":201,"body":"{\"id\":5,\"name\":\"PRUEBA-SEGURIDAD-NO-PRODUCCION\",\"category\":\"prueba\",\"price\":1,\"stock\":1,\"created_at\":\"2026-10-22T03:36:49.550Z\"}"}
+  
+  201 !== 401
+  
+      at TestContext.<anonymous> (file:///C:/Users/MSI/Desktop/7mo%20Semestre/Seguridad/Proyect_ECOVIDA/server/tests/security.test.js:34:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 201,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\security.test.js:37:1
+✖ PA02: una persona anónima no puede modificar productos (596.6186ms)
+  AssertionError [ERR_ASSERTION]: Resultado inesperado: {"status":200,"body":"{\"id\":1,\"name\":\"Frutas Orgánicas\",\"category\":\"Frutas y Verduras\",\"price\":2,\"stock\":100,\"created_at\":\"2026-10-12T22:27:15.742Z\"}"}
+  
+  200 !== 401
+  
+      at TestContext.<anonymous> (file:///C:/Users/MSI/Desktop/7mo%20Semestre/Seguridad/Proyect_ECOVIDA/server/tests/security.test.js:39:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\security.test.js:42:1
+✖ PA03: una persona anónima no puede eliminar productos (196.4137ms)
+  AssertionError [ERR_ASSERTION]: Resultado inesperado: {"status":200,"body":"{\"mensaje\":\"Producto eliminado\",\"id\":1}"}
+  
+  200 !== 401
+  
+      at TestContext.<anonymous> (file:///C:/Users/MSI/Desktop/7mo%20Semestre/Seguridad/Proyect_ECOVIDA/server/tests/security.test.js:44:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+

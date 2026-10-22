@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-22T03:36:52.682Z",
+  "node": "v24.15.0",
+  "baseUrl": "https://ecovida-server-staging.onrender.com",
+  "results": [
+    {
+      "name": "pruebas",
+      "code": 1
+    },
+    {
+      "name": "npm-audit",
+      "code": 1
+    }
+  ]
+}

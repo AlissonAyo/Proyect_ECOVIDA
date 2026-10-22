@@ -5,6 +5,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import productsRouter from './routes/products.js';
 import authRouter from './routes/auth.js';
+import debugRouter from './routes/debug.js';
 import { verifyDb } from './db.js';
 
 const app = express();
@@ -78,6 +79,13 @@ app.get('/', (_req, res) => {
 
 app.use('/api/products', productsRouter);
 app.use('/api/auth', authRouter);
+
+// Endpoint TEMPORAL de reset de seed (pentesting/staging).
+// Solo se monta con NODE_ENV=development o STAGING_MODE=true.
+// ELIMINAR ESTE BLOQUE (y routes/debug.js) ANTES DE PRODUCCIÓN.
+if (process.env.NODE_ENV === 'development' || process.env.STAGING_MODE === 'true') {
+  app.use('/api/_debug', debugRouter);
+}
 
 // 404 JSON
 app.use((_req, res) => {
