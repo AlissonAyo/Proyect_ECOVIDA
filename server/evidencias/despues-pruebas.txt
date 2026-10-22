@@ -1,0 +1,12 @@
+✔ PA01: una persona anónima no puede crear productos (31332.7751ms)
+✔ PA02: una persona anónima no puede modificar productos (505.3039ms)
+✔ PA03: una persona anónima no puede eliminar productos (179.5068ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32190.9747
+
